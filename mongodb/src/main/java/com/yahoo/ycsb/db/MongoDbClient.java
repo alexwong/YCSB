@@ -342,6 +342,9 @@ public class MongoDbClient extends DB {
       Map<String, ByteIterator> values) {
     try {
       MongoCollection<Document> collection = retrieveCollection(table, key);
+
+      collection.getPlanCache().clear();
+
       Document toInsert = new Document("_id", getActualKey(key));
 
       for (Map.Entry<String, ByteIterator> entry : values.entrySet()) {
@@ -411,6 +414,8 @@ public class MongoDbClient extends DB {
       System.err.println("aw528 key "+getActualkey(key));
       Document query = new Document("_id", getActualKey(key));
 
+      collection.getPlanCache().clear();
+
       FindIterable<Document> findIterable = collection.find(query);
 
       if (fields != null) {
@@ -457,6 +462,8 @@ public class MongoDbClient extends DB {
     MongoCursor<Document> cursor = null;
     try {
       MongoCollection<Document> collection = retrieveCollection(table, startkey);
+
+      collection.getPlanCache().clear();
 
       Document scanRange = new Document("$gte", getActualKey(startkey));
       Document query = new Document("_id", scanRange);
@@ -522,6 +529,8 @@ public class MongoDbClient extends DB {
       Map<String, ByteIterator> values) {
     try {
       MongoCollection<Document> collection = retrieveCollection(table, key);
+
+      collection.getPlanCache().clear();
 
       Document query = new Document("_id", getActualKey(key));
       Document fieldsToSet = new Document();
