@@ -176,7 +176,7 @@ public class MongoDbClient extends DB {
       System.err.println("random initializing");
       //Hardcode destinations as a string
       int numberOfDestinations;
-      String url1 = "mongodb://localhost:27017/ycsb?w=1";
+      String url1 = "mongodb://128.253.128.66:27017/ycsb?w=1";
 
       //Hardcode adding to a list
       List<String> urls = new ArrayList<>();
