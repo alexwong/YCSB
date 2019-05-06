@@ -173,6 +173,7 @@ public class MongoDbClient extends DB {
    */
   private boolean initRemoteDestinations(){
     try {
+      System.err.println("random initializing");
       //Hardcode destinations as a string
       int numberOfDestinations;
       String url1 = "mongodb://localhost:27017/ycsb?w=1";
@@ -183,13 +184,15 @@ public class MongoDbClient extends DB {
 
       //Hardcode entries as a string
       //If currentRequest > entry1 and < entry2 then we use that URI
+      Properties props = getProperties();
+      int count = Integer.parseInt(props.getProperty("mongodb.remoteCount", "16000000"));
       List<Integer> entries = new ArrayList<>();
-      Integer entry1 = new Integer(10000000);
+      Integer entry1 = new Integer(count);
+      System.err.println("random aw528"+count);
       entries.add(entry1);
       requestRanges.add(entry1);
 
       //Create client and add to map
-      Properties props = getProperties();
       String url = "";
       for (int i = 0; i < urls.size(); i++) {
         url = OptionsSupport.updateUrl(urls.get(i), props);
