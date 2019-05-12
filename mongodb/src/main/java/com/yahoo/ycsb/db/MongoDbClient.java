@@ -123,6 +123,9 @@ public class MongoDbClient extends DB {
   /** How often we send to remote server */
   private static int currentCount = 0;
 
+  /** How often we send to remote server */
+  private static boolean remoteFlag = false
+
   /**
    * Cleanup any state for this DB. Called once per DB instance; there is one DB
    * instance per client thread.
@@ -196,6 +199,7 @@ public class MongoDbClient extends DB {
       if (count != 16000000) {
         //Gives us how often we should send to remote....
         remoteInterval = 16000000/count;
+        remoteFlag = true;
       }
       Integer entry1 = new Integer(count);
       System.err.println("random aw528"+count);
@@ -369,7 +373,7 @@ public class MongoDbClient extends DB {
   public Status insert(String table, String key,
       Map<String, ByteIterator> values) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document toInsert = new Document("_id", getActualKey(key));
 
@@ -435,7 +439,7 @@ public class MongoDbClient extends DB {
   public Status read(String table, String key, Set<String> fields,
       Map<String, ByteIterator> result) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document query = new Document("_id", getActualKey(key));
 
@@ -484,7 +488,7 @@ public class MongoDbClient extends DB {
       Set<String> fields, Vector<HashMap<String, ByteIterator>> result) {
     MongoCursor<Document> cursor = null;
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, startkey);
+      MongoCollection<Document> collection = retrieveCollection(table, startkey, remoteFlag);
 
       System.err.println("aw528 table "+table);
       Document scanRange = new Document("$gte", getActualKey(startkey));
@@ -550,7 +554,7 @@ public class MongoDbClient extends DB {
   public Status update(String table, String key,
       Map<String, ByteIterator> values) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document query = new Document("_id", getActualKey(key));
       Document fieldsToSet = new Document();
