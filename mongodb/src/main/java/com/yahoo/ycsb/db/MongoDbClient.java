@@ -117,6 +117,15 @@ public class MongoDbClient extends DB {
   /** String -> MongoDatabase mapping. */
   private static List<Integer> requestRanges = new ArrayList<Integer>();
 
+  /** How often we send to remote server */
+  private static int remoteInterval = 16000000;
+
+  /** How often we send to remote server */
+  private static int currentCount = 0;
+
+  /** How often we send to remote server */
+  private static boolean remoteFlag = false
+
   /**
    * Cleanup any state for this DB. Called once per DB instance; there is one DB
    * instance per client thread.
@@ -187,6 +196,11 @@ public class MongoDbClient extends DB {
       Properties props = getProperties();
       int count = Integer.parseInt(props.getProperty("mongodb.remoteCount", "16000000"));
       List<Integer> entries = new ArrayList<>();
+      if (count != 16000000) {
+        //Gives us how often we should send to remote....
+        remoteInterval = 16000000/count;
+        remoteFlag = true;
+      }
       Integer entry1 = new Integer(count);
       System.err.println("random aw528"+count);
       entries.add(entry1);
@@ -304,27 +318,40 @@ public class MongoDbClient extends DB {
     return splittedString[0];
   }
 
-  private MongoCollection<Document> retrieveCollection(String table, String key){
+  private MongoCollection<Document> retrieveCollection(String table, String key, boolean randomlyDistribute){
     //Going to have some bad code, always assume it's correctly formatted.
     System.err.println(key);
     String[] splittedString = key.split(":", 2);
     String actualKey = splittedString[0];
     int currentRequest = Integer.parseInt(splittedString[1]);
 
-    int previous = -1;
-    for(int i = 0; i<requestRanges.size(); i++){
-      if(requestRanges.get(i) > currentRequest){
-        break;
+    if (randomlyDistribute) {
+      System.err.println("random");
+      if ((currentCount%remoteInterval) == 0) {
+        System.err.println("going remote "+currentCount+" "+remoteInterval);
+        //Hard-code first remote location
+        return remoteDestinations.get(0).getCollection(table);
+      } else {
+        System.err.println("going local "+currentCount+" "+remoteInterval);
+        return database.getCollection(table);
       }
-      previous = requestRanges.get(i);
-    }
-
-    if(remoteDestinations.containsKey(previous) && (previous > 0)){
-      System.err.println("going remote "+currentRequest);
-      return remoteDestinations.get(previous).getCollection(table);
     } else {
-      System.err.println("going local "+currentRequest);
-      return database.getCollection(table);
+        System.err.println("interval");
+        int previous = -1;
+        for (int i = 0; i < requestRanges.size(); i++) {
+          if (requestRanges.get(i) > currentRequest) {
+            break;
+          }
+          previous = requestRanges.get(i);
+        }
+
+        if (remoteDestinations.containsKey(previous) && (previous > 0)) {
+          System.err.println("going remote " + currentRequest);
+          return remoteDestinations.get(previous).getCollection(table);
+        } else {
+          System.err.println("going local " + currentRequest);
+          return database.getCollection(table);
+        }
     }
   }
 
@@ -346,7 +373,7 @@ public class MongoDbClient extends DB {
   public Status insert(String table, String key,
       Map<String, ByteIterator> values) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document toInsert = new Document("_id", getActualKey(key));
 
@@ -412,7 +439,7 @@ public class MongoDbClient extends DB {
   public Status read(String table, String key, Set<String> fields,
       Map<String, ByteIterator> result) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document query = new Document("_id", getActualKey(key));
 
@@ -461,7 +488,7 @@ public class MongoDbClient extends DB {
       Set<String> fields, Vector<HashMap<String, ByteIterator>> result) {
     MongoCursor<Document> cursor = null;
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, startkey);
+      MongoCollection<Document> collection = retrieveCollection(table, startkey, remoteFlag);
 
       System.err.println("aw528 table "+table);
       Document scanRange = new Document("$gte", getActualKey(startkey));
@@ -527,7 +554,7 @@ public class MongoDbClient extends DB {
   public Status update(String table, String key,
       Map<String, ByteIterator> values) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document query = new Document("_id", getActualKey(key));
       Document fieldsToSet = new Document();
