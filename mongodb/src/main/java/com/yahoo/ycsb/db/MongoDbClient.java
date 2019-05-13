@@ -117,13 +117,13 @@ public class MongoDbClient extends DB {
   /** String -> MongoDatabase mapping. */
   private static List<Integer> requestRanges = new ArrayList<Integer>();
 
-  /** How often we send to remote server */
+  /** How often we send to remote server. */
   private static int remoteInterval = 16000000;
 
-  /** How often we send to remote server */
+  /** How often we send to remote server. */
   private static int currentCount = 0;
 
-  /** How often we send to remote server */
+  /** How often we send to remote server. */
   private static boolean remoteFlag = false
 
   /**
@@ -336,22 +336,22 @@ public class MongoDbClient extends DB {
         return database.getCollection(table);
       }
     } else {
-        System.err.println("interval");
-        int previous = -1;
-        for (int i = 0; i < requestRanges.size(); i++) {
-          if (requestRanges.get(i) > currentRequest) {
-            break;
-          }
-          previous = requestRanges.get(i);
+      System.err.println("interval");
+      int previous = -1;
+      for (int i = 0; i < requestRanges.size(); i++) {
+        if (requestRanges.get(i) > currentRequest) {
+          break;
         }
+        previous = requestRanges.get(i);
+      }
 
-        if (remoteDestinations.containsKey(previous) && (previous > 0)) {
-          System.err.println("going remote " + currentRequest);
-          return remoteDestinations.get(previous).getCollection(table);
-        } else {
-          System.err.println("going local " + currentRequest);
-          return database.getCollection(table);
-        }
+      if (remoteDestinations.containsKey(previous) && (previous > 0)) {
+        System.err.println("going remote " + currentRequest);
+        return remoteDestinations.get(previous).getCollection(table);
+      } else {
+        System.err.println("going local " + currentRequest);
+        return database.getCollection(table);
+      }
     }
   }
 
