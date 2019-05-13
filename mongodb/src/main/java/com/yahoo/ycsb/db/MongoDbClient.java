@@ -201,7 +201,7 @@ public class MongoDbClient extends DB {
         remoteInterval = 16000000/count;
         remoteFlag = true;
       }
-      Integer entry1 = new Integer(count);
+      Integer entry1 = new Integer(0);
       System.err.println("random aw528"+count);
       entries.add(entry1);
       requestRanges.add(entry1);
