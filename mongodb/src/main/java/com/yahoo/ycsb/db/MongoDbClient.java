@@ -124,7 +124,7 @@ public class MongoDbClient extends DB {
   private static int currentCount = 0;
 
   /** How often we send to remote server. */
-  private static boolean remoteFlag = false
+  private static boolean remoteFlag = false;
 
   /**
    * Cleanup any state for this DB. Called once per DB instance; there is one DB
