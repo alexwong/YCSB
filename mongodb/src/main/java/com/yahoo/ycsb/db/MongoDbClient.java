@@ -329,13 +329,14 @@ public class MongoDbClient extends DB {
       System.err.println("random");
       if ((currentCount%remoteInterval) == 0) {
         System.err.println("going remote "+currentCount+" "+remoteInterval);
+        currentCount++;
         //Hard-code first remote location
         return remoteDestinations.get(0).getCollection(table);
       } else {
-        System.err.println("going local "+currentCount+" "+remoteInterval);
+        System.err.println("going local " + currentCount + " " + remoteInterval);
+        currentCount++;
         return database.getCollection(table);
       }
-      currentCount++;
     } else {
       System.err.println("interval");
       int previous = -1;
