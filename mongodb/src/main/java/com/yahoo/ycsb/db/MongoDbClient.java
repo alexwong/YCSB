@@ -374,8 +374,7 @@ public class MongoDbClient extends DB {
   public Status insert(String table, String key,
       Map<String, ByteIterator> values) {
     try {
-      MongoCollection<Document> collection =
-      (table, key, remoteFlag);
+      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document toInsert = new Document("_id", getActualKey(key));
 
