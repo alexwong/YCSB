@@ -335,6 +335,7 @@ public class MongoDbClient extends DB {
         System.err.println("going local "+currentCount+" "+remoteInterval);
         return database.getCollection(table);
       }
+      currentCount++;
     } else {
       System.err.println("interval");
       int previous = -1;
@@ -373,7 +374,8 @@ public class MongoDbClient extends DB {
   public Status insert(String table, String key,
       Map<String, ByteIterator> values) {
     try {
-      MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
+      MongoCollection<Document> collection =
+      (table, key, remoteFlag);
       System.err.println("aw528 table "+table);
       Document toInsert = new Document("_id", getActualKey(key));
 
