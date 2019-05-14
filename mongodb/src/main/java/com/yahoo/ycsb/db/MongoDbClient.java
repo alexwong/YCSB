@@ -161,7 +161,7 @@ public class MongoDbClient extends DB {
   public Status delete(String table, String key) {
     try {
       MongoCollection<Document> collection = database.getCollection(table);
-      System.err.println("aw528 table "+table);
+      //System.err.println("aw528 table "+table);
       Document query = new Document("_id", getActualKey(key));
       DeleteResult result =
           collection.withWriteConcern(writeConcern).deleteOne(query);
@@ -209,7 +209,7 @@ public class MongoDbClient extends DB {
         remoteFlag = true;
       }
       Integer entry1 = new Integer(0);
-      System.err.println("random aw528"+count);
+      //System.err.println("random aw528"+count);
       entries.add(entry1);
       requestRanges.add(entry1);
 
@@ -327,25 +327,25 @@ public class MongoDbClient extends DB {
 
   private MongoCollection<Document> retrieveCollection(String table, String key, boolean randomlyDistribute){
     //Going to have some bad code, always assume it's correctly formatted.
-    System.err.println(key);
+    //System.err.println(key);
     String[] splittedString = key.split(":", 2);
     String actualKey = splittedString[0];
     int currentRequest = Integer.parseInt(splittedString[1]);
 
     if (randomlyDistribute) {
-      System.err.println("random");
+      //System.err.println("random");
       if ((currentCount%remoteInterval) == 0) {
-        System.err.println("going remote "+currentCount+" "+remoteInterval);
+        //System.err.println("going remote "+currentCount+" "+remoteInterval);
         currentCount++;
         //Hard-code first remote location
         return remoteDestinations.get(0).getCollection(table);
       } else {
-        System.err.println("going local " + currentCount + " " + remoteInterval);
+        //System.err.println("going local " + currentCount + " " + remoteInterval);
         currentCount++;
         return database.getCollection(table);
       }
     } else {
-      System.err.println("interval");
+      //System.err.println("interval");
       int previous = -1;
       for (int i = 0; i < requestRanges.size(); i++) {
         if (requestRanges.get(i) > currentRequest) {
@@ -355,10 +355,10 @@ public class MongoDbClient extends DB {
       }
 
       if (remoteDestinations.containsKey(previous) && (previous > 0)) {
-        System.err.println("going remote " + currentRequest);
+        //System.err.println("going remote " + currentRequest);
         return remoteDestinations.get(previous).getCollection(table);
       } else {
-        System.err.println("going local " + currentRequest);
+        //System.err.println("going local " + currentRequest);
         return database.getCollection(table);
       }
     }
@@ -383,7 +383,7 @@ public class MongoDbClient extends DB {
       Map<String, ByteIterator> values) {
     try {
       MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
-      System.err.println("aw528 table "+table);
+      //System.err.println("aw528 table "+table);
       Document toInsert = new Document("_id", getActualKey(key));
 
       for (Map.Entry<String, ByteIterator> entry : values.entrySet()) {
@@ -499,7 +499,7 @@ public class MongoDbClient extends DB {
     try {
       MongoCollection<Document> collection = retrieveCollection(table, startkey, remoteFlag);
 
-      System.err.println("aw528 table "+table);
+      //System.err.println("aw528 table "+table);
       Document scanRange = new Document("$gte", getActualKey(startkey));
       Document query = new Document("_id", scanRange);
       Document sort = new Document("_id", INCLUDE);
@@ -564,7 +564,7 @@ public class MongoDbClient extends DB {
       Map<String, ByteIterator> values) {
     try {
       MongoCollection<Document> collection = retrieveCollection(table, key, remoteFlag);
-      System.err.println("aw528 table "+table);
+      //System.err.println("aw528 table "+table);
       Document query = new Document("_id", getActualKey(key));
       Document fieldsToSet = new Document();
       for (Map.Entry<String, ByteIterator> entry : values.entrySet()) {

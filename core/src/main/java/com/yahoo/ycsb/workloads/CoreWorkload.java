@@ -401,7 +401,7 @@ public class CoreWorkload extends Workload {
   @Override
   public void init(Properties p) throws WorkloadException {
 
-    System.err.println("aw528 CoreWorkload");
+    //System.err.println("aw528 CoreWorkload");
 
     table = p.getProperty(TABLENAME_PROPERTY, TABLENAME_PROPERTY_DEFAULT);
 
