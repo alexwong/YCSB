@@ -118,7 +118,7 @@ public class MongoDbClient extends DB {
   private static List<Integer> requestRanges = new ArrayList<Integer>();
 
   /** How often we send to remote server. */
-  private static int remoteInterval = 16000000;
+  private static int remoteInterval = 10000000;
 
   /** How often we send to remote server. */
   private static int currentCount = 0;
@@ -191,7 +191,7 @@ public class MongoDbClient extends DB {
       // -target 300 -p mongodb.count=120000 -p mongodb.remoteCount=whaterver you want
       //aw528: Change this to ip address of remote mongodb
       //aw528: Pass in whatever you want to mongodb.remoteCount
-      String url1 = "mongodb://localhost:27017/ycsb?w=1";
+      String url1 = "mongodb://128.253.128.64:32785/ycsb?w=1";
 
       //Hardcode adding to a list
       List<String> urls = new ArrayList<>();
@@ -201,11 +201,11 @@ public class MongoDbClient extends DB {
       //If currentRequest > entry1 and < entry2 then we use that URI
       Properties props = getProperties();
       //aw528: change any instance of 16000000 to wahtever the actual max is
-      int count = Integer.parseInt(props.getProperty("mongodb.remoteCount", "16000000"));
+      int count = Integer.parseInt(props.getProperty("mongodb.remoteCount", "10000000"));
       List<Integer> entries = new ArrayList<>();
-      if (count != 16000000) {
+      if (count != 10000000) {
         //Gives us how often we should send to remote....
-        remoteInterval = 16000000/count;
+        remoteInterval = 10000000/count;
         remoteFlag = true;
       }
       Integer entry1 = new Integer(0);
