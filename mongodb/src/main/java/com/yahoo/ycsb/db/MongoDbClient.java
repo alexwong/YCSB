@@ -200,6 +200,7 @@ public class MongoDbClient extends DB {
       //Hardcode entries as a string
       //If currentRequest > entry1 and < entry2 then we use that URI
       Properties props = getProperties();
+      //aw528: change any instance of 16000000 to wahtever the actual max is
       int count = Integer.parseInt(props.getProperty("mongodb.remoteCount", "16000000"));
       List<Integer> entries = new ArrayList<>();
       if (count != 16000000) {
