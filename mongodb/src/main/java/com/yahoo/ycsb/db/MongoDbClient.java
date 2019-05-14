@@ -185,6 +185,12 @@ public class MongoDbClient extends DB {
       System.err.println("random initializing");
       //Hardcode destinations as a string
       int numberOfDestinations;
+
+      ///home/aw528/datacenter/YCSB/mongodb/target/ycsb-mongodb-binding-0.16.0-SNAPSHOT/bin/ycsb run mongodb
+      // -p mongodb.url=local/mongodb -s -P workloads/workloadc -threads 10 -p operationcount=18000
+      // -target 300 -p mongodb.count=120000 -p mongodb.remoteCount=whaterver you want
+      //aw528: Change this to ip address of remote mongodb
+      //aw528: Pass in whatever you want to mongodb.remoteCount
       String url1 = "mongodb://localhost:27017/ycsb?w=1";
 
       //Hardcode adding to a list
